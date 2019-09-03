@@ -2,6 +2,7 @@
 Plugin Name: Jetpack
 Description: Jetpack enables you to connect your blog to a WordPress.com account to use the powerful features normally only available to WordPress.com users.
 Version: 0.7.2
+Text Domain: Jetpack
 */
 
 GIF89;a
